@@ -1,0 +1,21 @@
+{
+  "name": "restaurant_cases",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "biot-core": "^0.2.19",
+    "e.router": "^0.1.3",
+    "koa": "^2.8.1",
+    "koa-ejs": "^4.2.0",
+    "koa-socket-2": "^1.2.0",
+    "koa-static": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Smart Home</title>
+    <div class="container" style="text-align: center; margin-top: 5px">
+    </div>
+</head>
+<body>
+<div style="width: 240px; position: relative; left:50%; margin-left: -120px">
+    <div style="display: inline-block; width: 180px">Current price for kW:</div>
+    <div id="price" style="text-align: center; width: 50px;display: inline-block">3 BC</div>
+</div>
+<div style="width: 240px; position: relative; left:50%; margin-left: -120px">
+    <div style="display: inline-block; width: 180px">Current consumption:</div>
+    <div id="consumption" style="text-align: center; width: 50px;display: inline-block">0 kW</div>
+</div>
+<div style="width: 240px; position: relative; left:50%; margin-left: -120px">
+    <div style="display: inline-block; width: 180px">Current payment:</div>
+    <div id="payment" style="text-align: center; width: 50px;display: inline-block">0 BC</div>
+</div>
+<div style="width: 240px; position: relative; left:50%; margin-left: -120px">
+    <div style="display: inline-block; width: 180px">Total paid:</div>
+    <div id="paid" style="text-align: center; width: 50px;display: inline-block">0 BC</div>
+</div>
+
+<div class="container">
+    <div class="checkbox-name">First floor</div>
+    <div class='checkbox'>
+        <label class='switch'>
+            <input type='checkbox' id='green' onchange="change(this)"/>
+            <div class='slider round'></div>
+        </label>
+    </div>
+</div>
+<div class="container">
+    <div class="checkbox-name">Second floor</div>
+    <div class='checkbox'>
+        <label class='switch'>
+            <input type='checkbox' id='blue' onchange="change(this)"/>
+            <div class='slider round'></div>
+        </label>
+    </div>
+</div>
+<div class="container">
+    <div class="checkbox-name">Roof</div>
+    <div class='checkbox'>
+        <label class='switch'>
+            <input type='checkbox' id='White' onchange="change(this)"/>
+            <div class='slider round'></div>
+        </label>
+    </div>
+</div>
+<!--<div class="container">-->
+<!--    <img src="image.png"/>-->
+<!--</div>-->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	let socket = io();
+
+	let lights = {
+		floor1: false,
+		floor2: false,
+		roof: false
+	};
+
+	function reCalc() {
+		let balance = 0;
+		let kw = 0;
+		if (lights.floor1) {
+			balance += 3;
+			kw++;
+		}
+		if (lights.floor2) {
+			balance += 3;
+			kw++;
+		}
+		if (lights.roof) {
+			balance += 3;
+			kw++;
+		}
+
+		document.getElementById('consumption').innerHTML = kw + ' kW';
+		document.getElementById('payment').innerHTML = balance + ' BC';
+	}
+
+	function change(t) {
+		if (t.id === 'green') {
+			socket.emit('set', {key: 'floor1', value: t.checked});
+			lights.floor1 = t.checked;
+		} else if (t.id === 'blue') {
+			socket.emit('set', {key: 'floor2', value: t.checked});
+			lights.floor2 = t.checked;
+		} else {
+			socket.emit('set', {key: 'roof', value: t.checked});
+			lights.roof = t.checked;
+		}
+		reCalc();
+	}
+
+	socket.on('upd_paid', v => {
+		document.getElementById('paid').innerHTML = v + ' BC';
+	})
+</script>
+</body>
+</html>
